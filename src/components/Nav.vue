@@ -20,15 +20,16 @@
     </div>
 </template>
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router'
 import NavCover from '@/components/icons/NavCover.vue'
-import { onMounted } from 'vue';
 
+const router = useRouter()
 const coverPosition = ref('')
 const navList = ref([
-    { title: '推送', status: 'black' },
-    { title: '日程', status: 'white' },
-    { title: '发帖', status: 'white' }
+    { title: '推送', page: 'articles' , status: 'black' },
+    { title: '日程', page: 'dariy' , status: 'white' },
+    { title: '发帖', page: 'push' , status: 'white' }
 ])
 
 const changeNav = (v,idx) => {
@@ -38,6 +39,7 @@ const changeNav = (v,idx) => {
     })
     navList.value[idx].status = 'black'
     coverPosition.value = `translate(${coverVars[idx]}%,-15%)`
+    router.push({name: v.page })
 }
 
 onMounted(()=>{
