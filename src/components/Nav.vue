@@ -1,11 +1,11 @@
 <template>
-    <div class="nav-container">
+    <div class="nav-container" :style="{ '--translate-val': coverPosition }">
         <div class="userinfo">
             <div class="info">
                 <div class="avatar"></div>
                 <div class="name-exp">
                     <div class="name">攸沐</div>
-                    <div class="exp">4405/ 11780</div>
+                    <div class="exp" :style="{ '--user-exp': userExp }">{{ userExpArr[0] }}/ {{ userExpArr[1] }}</div>
                 </div>
             </div>
             <div class="level">
@@ -13,39 +13,52 @@
                 <div>LEVEL</div>
             </div>
         </div>
-        <div class="nav">
-            <NavCover class="cover" :style="{ transform: coverPosition }" />
+        <div class="nav" >
+            <NavCover :status="coverStatus" ref="coverRef" class="cover" />
             <div class="navitem" v-for="(item,index) in navList" :style="{ color: item.status }" @click="changeNav(item,index)">{{ item.title }}</div>
         </div>
     </div>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router'
 import NavCover from '@/components/icons/NavCover.vue'
 
 const router = useRouter()
 const coverPosition = ref('')
+const coverRef = ref()
+const coverStatus = ref(0)
+const userExpArr = ref([4405,11780])
 const navList = ref([
     { title: '推送', page: 'articles' , status: 'black' },
     { title: '日程', page: 'dariy' , status: 'white' },
     { title: '发帖', page: 'push' , status: 'white' }
 ])
 
+const userExp = computed(()=>{
+    return `${(userExpArr.value[0] / userExpArr.value[1]).toFixed(2) * 100}%`
+})
+
 const changeNav = (v,idx) => {
-    const coverVars = [0,90,190] 
+    const coverVars = [0,90,186] 
     navList.value.forEach(item=>{
         item.status = 'white'
     })
+    coverStatus.value = idx
     navList.value[idx].status = 'black'
     coverPosition.value = `translate(${coverVars[idx]}%,-15%)`
     router.push({name: v.page })
 }
 
 onMounted(()=>{
+    coverPosition.value = `translate(0%,-15%)`
 })
 </script>
 <style scoped>
+:root {
+    --translate-val: translate(0%,-15%);
+}
+
 .nav-container {
     width: 100%;
     height: 80px;
@@ -94,7 +107,7 @@ onMounted(()=>{
 
 .nav-container .userinfo .info .name-exp .exp {
     border: 1px solid #2b2b2b;
-    font-weight: 1000;
+    font-weight: 600;
     width: 100%;
     height: 100%;
     padding-right: 50px;
@@ -103,6 +116,21 @@ onMounted(()=>{
     background-color: #292929;
     box-shadow: inset -2px 2px 4px #202020,
     inset 2px -2px 4px #323232;
+    position: relative;
+    z-index: 2;
+}
+
+.nav-container .userinfo .info .name-exp .exp::after {
+    position: absolute;
+    content: '';
+    top: 50%;
+    left: 1px;
+    transform: translateY(-50%);
+    height: 98%;
+    width: var(--user-exp);
+    border-radius: 20px;
+    background: linear-gradient(30deg,#1e45f4,#6df4fe);
+    z-index: -1;
 }
 
 .nav-container .userinfo .info .avatar {
@@ -152,35 +180,33 @@ onMounted(()=>{
 }
 
 .nav-container .nav .navitem {
+    cursor: pointer;
     width: 33%;
     height: 100%;
     text-align: center;
     line-height: 40px;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 1000;
     font-style: italic;
     letter-spacing: 1px;
     background-color: transparent;
     position: relative;
-    transition: color .5s;
+    transition: all .5s;
     z-index: 1;
 }
 
 .nav-container .nav .cover {
     position: absolute;
-    transform: translate(0%,-15%);
-    transition: transform .3s;
+    transform: var(--translate-val);
+    animation: nav-animate .4s linear infinite alternate;
 }
 
-/* .nav-container .nav div:nth-child(1)::after {
-    content: '';
-    position: absolute;
-    width: 110%;
-    height: 140%;
-    left: -10%;
-    top: -20%;
-    background-color: #ffea49;
-    z-index: -1;
-    border-radius: 50px 0 0 50px;
-} */
+@keyframes nav-animate {
+  from {
+      transform: var(--translate-val) scale(1);
+  }
+  to {
+      transform: var(--translate-val) scale(1.1);
+  }
+}
 </style>

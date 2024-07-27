@@ -1,7 +1,10 @@
 <template>
     <div class="container">
         <div class="image">
-            <div class="icon"><WatchIcon class="watch" />{{ props.watchCount }}</div>
+            <div class="icon">
+                <WatchIcon class="watch" />
+                {{ props.watchCount }}
+            </div>
             <div class="userinfo">
                 <div class="avatar"></div>
                 <div class="username">
@@ -17,7 +20,7 @@
     </div>
 </template>
 <script setup>
-import { ref , defineProps, defineEmits, onMounted } from 'vue'
+import { ref , onMounted } from 'vue'
 import WatchIcon from '@/components/icons/IconWatch.vue'
 
 const props = defineProps(['username','title','text','watchCount'])
@@ -40,14 +43,14 @@ onMounted(()=>{
 }
 
 .container:hover {
-    animation: gradientBorder 2s linear infinite alternate;
+    animation: gradientBorder 0.8s linear infinite alternate;
 }
 
 .image {
     position: relative;
     height: 86%;
     width: 100%;
-    background: url('../assets/bg_01.jpg');
+    background: url('@/assets/bg_01.jpg');
     background-size: cover;
 }
 
